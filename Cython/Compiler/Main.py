@@ -353,6 +353,10 @@ class Context(object):
                 s = PyrexScanner(f, source_desc, source_encoding = f.encoding,
                                  scope = scope, context = self)
                 tree = Parsing.p_module(s, pxd, full_module_name)
+                imp = io.StringIO("from asyncio import coroutine as __cython_coroutine_wrapper")
+                import_node = Parsing.p_from_import_statement(PyrexScanner(imp, source_desc,
+                                                                           parent_scanner=s))
+                tree.body.stats.insert(0, import_node)
                 if self.options.formal_grammar:
                     try:
                         from ..Parser import ConcreteSyntaxTree

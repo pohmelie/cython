@@ -394,6 +394,11 @@ def p_async_statement(s, ctx, decorators):
         if 'pxd' in ctx.level:
             s.error('def statement not allowed here')
         s.level = ctx.level
+        if decorators is None:
+            decorators = []
+        pos = s.position()
+        decorator = ExprNodes.NameNode(pos, name="__cython_coroutine_wrapper")
+        decorators.append(Nodes.DecoratorNode(pos, decorator=decorator))
         return p_def_statement(s, decorators, is_async_def=True)
     elif decorators:
         s.error("Decorators can only be followed by functions or classes")
